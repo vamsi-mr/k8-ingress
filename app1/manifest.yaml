@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: app1
+  labels:
+    purpose: k8-ingress
+    project: roboshop
+    app: app1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      purpose: k8-ingress
+      project: roboshop
+      app: app1
+  ## Pod definition
+  template:
+    metadata:
+      labels:
+        purpose: k8-ingress
+        project: roboshop
+        app: app1
+    spec:
+      containers:
+      - name: app1
+        image: mohanvamsi011/app1:v1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1
+  labels:
+    purpose: k8-ingress
+    project: roboshop
+    app: app1
+spec:
+  selector:
+    purpose: k8-ingress
+    project: roboshop
+    app: app1
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: ingress
+metadata: 
+  name: app1
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS: 443"}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:025523569021:certificate/93dca4c1-0593-4dea-8f55-8faef9540234
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "app1.ravada.site"
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          services:
+            name: app1
+            port: 
+              number: 80  ### app1 service port
