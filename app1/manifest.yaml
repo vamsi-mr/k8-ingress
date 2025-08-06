@@ -47,10 +47,11 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
-metadata: 
+metadata:
   name: app1
   annotations:
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS: 443"}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:025523569021:certificate/93dca4c1-0593-4dea-8f55-8faef9540234
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
@@ -65,5 +66,5 @@ spec:
         backend:
           service:
             name: app1
-            port: 
-              number: 80  ### app1 service port
+            port:
+              number: 80  ## app1 service port
